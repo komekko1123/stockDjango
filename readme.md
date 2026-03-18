@@ -11,11 +11,19 @@
 此外，系統整合 **TA-Lib** 技術分析套件，計算多種金融指標，如 **RSI、SMA50、SMA200** 等，並依據這些指標進行綜合評分，提供使用者直觀的投資建議（買入／賣出）。
 
 
-# 環境安裝說明 Installation
+# 環境安裝 Installation
 
 建議環境: **Miniconda / Anaconda**
 
-建立conda環境(linux):
+
+安裝 **Miniconda (linux)**
+``` bash
+curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh --output anaconda.sh
+mv anaconda.sh /tmp
+cd /tmp4.bash anaconda.sh
+```
+
+建立conda環境:
 
 ``` bash
 conda env create --file environment.yml
@@ -33,7 +41,6 @@ conda activate cchh
 cd stockDjango
 python manage.py runserver 0.0.0.0:8000
 ```
-
 
 # 網頁 Web Pages
 
@@ -57,3 +64,12 @@ MRT Information
 ### 基於TA-lib分析出的指標
 <img width="1151" height="1087" alt="image" src="https://github.com/user-attachments/assets/4cef61cf-e08a-4d98-b43a-3e0f33cde261" />
 
+
+
+# debug(後端神經網路選擇錯誤)
+要解決的問題通常會有後端神經網路keras選擇的是theano，所以要開python把全域變數變成tensorflow就可解決這個問題
+
+``` bash
+import os
+os.environ['KERAS_BACKEND'] = 'tensorflow'
+```
