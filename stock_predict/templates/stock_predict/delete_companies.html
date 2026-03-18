@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>刪除公司</title>
+    {% load static %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 500px;
+            margin: auto;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .link {
+            position: absolute;
+            padding: 10px 15px;
+            color: white;
+            background-color: #007bff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .link:hover {
+            background-color: #0056b3;
+        }
+
+
+        .link-left {
+            top: 500px;
+            left: 20px;
+        }
+
+
+        .link-right {
+            top: 500px;
+            right: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+        select, input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        input[type="submit"] {
+            background-color: #d9534f;
+            color: white;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #c9302c;
+        }
+        .success, .error {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .success {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+        .error {
+            background-color: #f2dede;
+            color: #a94442;
+        }
+    </style>
+    <script>
+        async function handleDelete(event) {
+            event.preventDefault();
+            const stockCode = document.getElementById("stock_code").value;
+            const messageBox = document.getElementById("message");
+
+            if (!stockCode) {
+                messageBox.textContent = "請選擇公司代碼";
+                messageBox.className = "error";
+                return;
+            }
+
+            try {
+                const response = await fetch("{% url 'stock_predict:delete_companies' %}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": getCookie("csrftoken"),
+                    },
+                    body: JSON.stringify({ stock_code: stockCode }),
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    messageBox.textContent = `成功刪除公司: ${stockCode}`;
+                    messageBox.className = "success";
+                } else {
+                    messageBox.textContent = `錯誤: ${result.error}`;
+                    messageBox.className = "error";
+                }
+            } catch (error) {
+                messageBox.textContent = `請求失敗: ${error.message}`;
+                messageBox.className = "error";
+            }
+        }
+
+        // 獲取 CSRF Token 的輔助函數
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== "") {
+                const cookies = document.cookie.split(";");
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === name + "=") {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</head>
+<body>
+    <div class="content">
+        <h1>刪除公司</h1>
+        <form onsubmit="handleDelete(event)">
+            <select id="stock_code" name="stock_code">
+                {% for code, name in companies.items %}
+                <option value="{{ code }}">{{ name }} ({{ code }})</option>
+                {% endfor %}
+            </select>
+            <input type="submit" value="刪除">
+        </form>
+        <div id="message"></div>
+
+        <!-- 左下角链接 -->
+        <a href="{% url 'stock_predict:home' %}" class="link link-left">前往股票預測系統</a>
+        
+        <!-- 右下角链接 -->
+        <a href="{% url 'stock_predict:update_companies' %}" class="link link-right">前往新增系統</a>
+        
+    </div>
+</body>
+</html>

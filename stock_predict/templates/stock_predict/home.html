@@ -1,0 +1,151 @@
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>預測股票系統 </title>
+    {% load static %}
+    
+    <!-- 引入Chart.js ˊ這是gpt的但好像沒用到，主要是用javascript的那個-->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- CSS -->
+    <style>
+        body {
+            /* 背景圖像 */
+            background-image: url("{% static 'stock_predict/images/5.jpg' %}");
+            background-size: cover; 
+            background-position: center; 
+            background-repeat: no-repeat; 
+            background-attachment: fixed; 
+            
+            color: white; 
+            font-family: 'Arial', sans-serif; 
+        }
+        
+
+        .content {
+            background-color: rgba(0, 0, 0, 0.6); 
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+
+        .link {
+            position: absolute;
+            padding: 10px 15px;
+            color: white;
+            background-color: #007bff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .link:hover {
+            background-color: #0056b3;
+        }
+
+ 
+        .link-left {
+            top: 20px;
+            left: 20px;
+        }
+
+
+        .link-right {
+            top: 20px;
+            right: 20px;
+        }
+
+
+        form {
+            margin-top: 20px;
+        }
+        
+        select {
+            width: 200px;
+            text-align: center;
+            padding: 5px;
+            border-radius: 5px;
+            border: none;
+        }
+        
+        input[type="submit"] {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        
+
+        #hist_futu, #radar {
+            background-color: rgba(255, 255, 255, 0.8); 
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            #hist_futu, #radar {
+                width: 100% !important;
+                height: 300px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+        var stock_data = null;
+        var companies = {{ companies|safe }};
+        {% if data %}
+            stock_data = {{ data|safe }};
+            var recent_data = stock_data['recent_data'];
+            var stock_code = stock_data['stock_code'];
+            var predict_data = stock_data['predict_data'];
+            var indexs = stock_data['indexs'];
+        {% endif %}
+        console.log(companies);
+        console.log(stock_data);
+    </script>
+    
+
+     <!-- 左上角LINK -->
+     <a href="{% url 'stock_predict:delete_companies' %}" class="link link-left">前往刪除系統</a>
+    
+     <!-- 右上角LINK -->
+     <a href="{% url 'stock_predict:update_companies' %}" class="link link-right">前往新增系統</a>
+     
+    <center>
+        <div class="content">
+            <h1>預測股票系統</h1>
+            <div style="margin-top: 50px;">
+                <form id="commit_stock_code" action="{% url 'stock_predict:predict' %}" method="post">
+                    {% csrf_token %}
+                    <select name="stock_code">
+                        {% for code, name in companies.items %}
+                        <option id="{{ code }}" value="{{ code }}">{{ name }} ({{ code }})</option>
+                        {% endfor %}
+                    </select>
+                    <input type="submit" value="查詢">
+                </form>
+            </div>
+        </div>
+    
+        <!-- 給Chart.js放圖的空間 -->
+        <div style="width:100%; height:600px; margin-top:50px;">
+            <canvas id="hist_futu" style="width: 100%; height: 450px;"></canvas>
+            <canvas id="radar" style="width:50%; height:600px;"></canvas>
+        </div>
+
+        
+    </center>
+    
+    <!-- 引入自定义绘图脚本 -->
+    <script src="{% static 'stock_predict/js/draw_charts.js' %}"></script>
+</body>
+</html>

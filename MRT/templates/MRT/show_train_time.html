@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ day_type }}{{ direction.direction_name }} {{ station.station_name }}</title>
+</head>
+<body>
+    <h1>{{ day_type }}{{ direction.direction_name }} {{ station.station_name }}</h1>
+    <a href="../../">返回</a>
+    <ul>
+        {% for timetable in timetables %}
+            <a href="../../../../../train/{{ direction.direction_name }}/{{ day_type }}/{{ timetable.train_number.train_number }}">{{ timetable.arrival_time }}</a> </br> <!-- 顯示時間 -->
+        {% empty %}
+            <li>No timetables available.</li> <!-- 若沒有資料 -->
+        {% endfor %}
+    </ul>
+</body>
+</html>

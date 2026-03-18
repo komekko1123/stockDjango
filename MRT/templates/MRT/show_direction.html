@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ line.line_name }}</title>
+</head>
+<body>
+    <h1>{{ line.line_name }}</h1>
+    <a href="../">返回</a>
+    <ul>
+        {% for direction in directions %}
+            <li>
+                <a href="{{direction.direction_name}}">{{ direction.direction_name }}</a>
+            </li> <!-- 顯示 Direction 的名稱 -->
+        {% empty %}
+            <li>No directions available.</li> <!-- 若沒有資料 -->
+        {% endfor %}
+    </ul>
+</body>
+</html>

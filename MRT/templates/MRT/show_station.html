@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ direction.direction_name }}</title>
+</head>
+<body>
+    <h1>{{ direction.direction_name }}</h1>
+    <a href="../">返回</a>
+    <ul>
+        {% for station in stations %}
+            <li>
+                {{ station.station_name }}
+                <a href="{{station.station_name}}/平日/">平日</a>
+                <a href="{{station.station_name}}/假日/">假日</a>
+            </li>
+        {% empty %}
+            <li>No stations available.</li> <!-- 若沒有資料 -->
+        {% endfor %}
+    </ul>
+</body>
+</html>

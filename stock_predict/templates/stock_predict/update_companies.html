@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>動態加入公司</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        label {
+            margin-right: 10px;
+        }
+        input {
+            margin-bottom: 10px;
+            padding: 5px;
+        }
+
+        .link {
+            position: absolute;
+            padding: 10px 15px;
+            color: white;
+            background-color: #007bff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .link:hover {
+            background-color: #0056b3;
+        }
+
+
+        .link-left {
+            top: 500px;
+            left: 20px;
+        }
+
+
+        .link-right {
+            top: 500px;
+            right: 20px;
+        }
+
+        button {
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .success {
+            color: green;
+            margin-top: 20px;
+        }
+        .error {
+            color: red;
+            margin-top: 20px;
+        }
+    </style>
+    <script>
+        async function addCompany() {
+            const code = document.getElementById("code").value.trim();
+            const name = document.getElementById("name").value.trim();
+            const messageBox = document.getElementById("message");
+
+            if (!code || !name) {
+                messageBox.textContent = "請輸入公司代碼和名稱！";
+                messageBox.className = "error";
+                return;
+            }
+
+            try {
+                const response = await fetch("{% url 'stock_predict:update_companies' %}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": getCookie("csrftoken")
+                    },
+                    body: JSON.stringify({ code, name }),
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    // 顯示成功消息
+                    messageBox.textContent = `成功新增或更新公司: ${code} - ${name}，資料爬取完成！`;
+                    messageBox.className = "success";
+                } else {
+                    // 顯示錯誤消息
+                    messageBox.textContent = `錯誤: ${result.error}`;
+                    messageBox.className = "error";
+                }
+            } catch (error) {
+                messageBox.textContent = `請求失敗: ${error}`;
+                messageBox.className = "error";
+            }
+        }
+
+        // 獲取 CSRF Token 的輔助函數
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== "") {
+                const cookies = document.cookie.split(";");
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === name + "=") {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</head>
+<body>
+    <h1>動態更新 Companies</h1>
+    <form>
+        <label for="code">公司代碼:</label>
+        <input type="text" id="code" placeholder="例如: 2330"><br>
+        <label for="name">公司名稱:</label>
+        <input type="text" id="name" placeholder="例如: 台積電"><br>
+        <button type="button" onclick="addCompany()">新增公司</button>
+    </form>
+
+    <div id="message"></div>
+    <br> <!-- 使用換行符進一步拉開距離 -->
+    <br> <!-- 使用換行符進一步拉開距離 -->
+
+     <a href="{% url 'stock_predict:delete_companies' %}" class="link link-right">前往刪除系統</a>
+    
+
+     <a href="{% url 'stock_predict:home' %}" class="link link-left">前往股票預測系統</a>
+     
+</body>
+</html>

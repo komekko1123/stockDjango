@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>捷運到站時間查詢</title>
+</head>
+<body>
+    <h1>捷運到站時間查詢</h1>
+    <a href="../">返回</a>
+    <ul>
+        {% for line in lines %}
+            <li>
+                <a href="{{line.line_name}}">{{ line.line_name }}</a>
+            </li> <!-- 顯示 Line 的名稱 -->
+        {% empty %}
+            <li>No lines available.</li> <!-- 若沒有資料 -->
+        {% endfor %}
+    </ul>
+</body>
+</html>
